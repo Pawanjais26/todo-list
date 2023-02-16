@@ -13,7 +13,10 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://shawndex7:pawan123@cluster0.rzjv3xw.mongodb.net/todolistDB", { useNewUrlParser: true });
+mongoose.connect(
+  "mongodb+srv://shawndex7:pawan123@cluster0.rzjv3xw.mongodb.net/todolistDB",
+  { useNewUrlParser: true }
+);
 
 const itemsSchema = {
   name: String,
@@ -108,22 +111,24 @@ app.post("/delete", function (req, res) {
   const checkedItemId = req.body.checkbox;
   const listName = req.body.listName;
 
-  if(listName === "Today"){
+  if (listName === "Today") {
     Item.findByIdAndRemove(checkedItemId, function (err) {
       if (!err) {
         console.log("Successfully deleted checked item.");
         res.redirect("/");
       }
     });
-
   } else {
-    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
-      if(!err){
-        res.redirect("/"+ listName)
+    List.findOneAndUpdate(
+      { name: listName },
+      { $pull: { items: { _id: checkedItemId } } },
+      function (err, foundList) {
+        if (!err) {
+          res.redirect("/" + listName);
+        }
       }
-    })
+    );
   }
-
 });
 
 app.get("/work", function (req, res) {
@@ -134,7 +139,11 @@ app.get("/about", function (req, res) {
   res.render("about");
 });
 
-const port = process.env.PORT || 3000
-app.listen(port , function () {
-  console.log("Server started on port 3000");
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+};
+
+app.listen(port, function () {
+  console.log("Server is running on port 3000.");
 });
